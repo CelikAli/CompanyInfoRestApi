@@ -1,6 +1,5 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Department} from './department.model';
-import {Employee} from './employee.model';
 
 @model()
 export class Employee extends Entity {

@@ -5,3 +5,7 @@ export * from './department-location.controller';
 export * from './title-change-department.controller';
 export * from './title-change-employee.controller';
 export * from './department-employee.controller';
+export * from './employee.controller';
+export * from './department.controller';
+export * from './location.controller';
+export * from './title-change.controller';

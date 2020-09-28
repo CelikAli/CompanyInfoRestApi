@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Department} from './department.model';
+import {Employee} from './employee.model';
 
 @model()
 export class TitleChange extends Entity {
@@ -26,6 +28,11 @@ export class TitleChange extends Entity {
   })
   endDate?: string;
 
+  @belongsTo(() => Department)
+  departmentId: number;
+
+  @belongsTo(() => Employee)
+  employeeId: number;
 
   constructor(data?: Partial<TitleChange>) {
     super(data);

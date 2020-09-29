@@ -1,8 +1,25 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Department} from './department.model';
 import {Employee} from './employee.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fkTitleChangeDepartmentId: {
+        name: 'fkTitleChangeDepartmentId',
+        entity: 'Department',
+        entityKey: 'id',
+        foreignKey: 'departmentid',
+      },
+      fkTitleChangeEmployeeId: {
+        name: 'fkTitleChangeEmployeeId',
+        entity: 'Employee',
+        entityKey: 'id',
+        foreignKey: 'employeeid',
+      },
+    },
+  },
+})
 export class TitleChange extends Entity {
   @property({
     type: 'number',

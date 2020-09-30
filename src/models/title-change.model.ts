@@ -1,6 +1,6 @@
 import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {Department} from './department.model';
-import {Employee} from './employee.model';
+import {Department, DepartmentWithRelations} from './department.model';
+import {Employee, EmployeeWithRelations} from './employee.model';
 
 @model({
   settings: {
@@ -57,7 +57,8 @@ export class TitleChange extends Entity {
 }
 
 export interface TitleChangeRelations {
-  // describe navigational properties here
+  department?: DepartmentWithRelations;
+  employee?: EmployeeWithRelations;
 }
 
 export type TitleChangeWithRelations = TitleChange & TitleChangeRelations;

@@ -1,24 +1,13 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {
+  belongsTo,
+  Entity,
+  hasMany,
+  model,
+  property,
+} from '@loopback/repository';
 import {Department, DepartmentWithRelations} from './department.model';
 
-@model({
-  settings: {
-    foreignKeys: {
-      fkEmployeeDepartmentId: {
-        name: 'fkEmployeeDepartmentId',
-        entity: 'Department',
-        entityKey: 'id',
-        foreignKey: 'departmentid',
-      },
-      fkEmployeeManagerId: {
-        name: 'fkEmployeeManagerId',
-        entity: 'Employee',
-        entityKey: 'id',
-        foreignKey: 'managerid',
-      },
-    },
-  },
-})
+@model()
 export class Employee extends Entity {
   @property({
     type: 'number',
@@ -70,8 +59,11 @@ export class Employee extends Entity {
   @belongsTo(() => Department)
   departmentId: number;
 
-  @belongsTo(() => Employee)
+  @belongsTo(() => Employee, {}, {default: -1})
   managerId: number;
+
+  @hasMany(() => Employee, {keyTo: 'managerId'})
+  employees: Employee[];
 
   constructor(data?: Partial<Employee>) {
     super(data);
@@ -81,6 +73,7 @@ export class Employee extends Entity {
 export interface EmployeeRelations {
   department?: DepartmentWithRelations;
   manager?: EmployeeWithRelations;
+  employees?: EmployeeWithRelations[];
 }
 
 export type EmployeeWithRelations = Employee & EmployeeRelations;

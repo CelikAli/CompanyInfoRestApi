@@ -2,24 +2,7 @@ import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Employee, EmployeeWithRelations} from './employee.model';
 import {Location, LocationWithRelations} from './location.model';
 
-@model({
-  settings: {
-    foreignKeys: {
-      fkDepartmentLocationId: {
-        name: 'fkDepartmentLocationId',
-        entity: 'Location',
-        entityKey: 'id',
-        foreignKey: 'locationid',
-      },
-      fkDepartmentDirectorId: {
-        name: 'fkDepartmentDirectorId',
-        entity: 'Employee',
-        entityKey: 'id',
-        foreignKey: 'directorid',
-      },
-    },
-  },
-})
+@model()
 export class Department extends Entity {
   @property({
     type: 'number',

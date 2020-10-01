@@ -7,13 +7,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
 } from '@loopback/rest';
 import {Employee} from '../models';
@@ -22,7 +22,7 @@ import {EmployeeRepository} from '../repositories';
 export class EmployeeController {
   constructor(
     @repository(EmployeeRepository)
-    public employeeRepository : EmployeeRepository,
+    public employeeRepository: EmployeeRepository,
   ) {}
 
   @post('/employees', {
@@ -57,9 +57,7 @@ export class EmployeeController {
       },
     },
   })
-  async count(
-    @param.where(Employee) where?: Where<Employee>,
-  ): Promise<Count> {
+  async count(@param.where(Employee) where?: Where<Employee>): Promise<Count> {
     return this.employeeRepository.count(where);
   }
 
@@ -80,7 +78,21 @@ export class EmployeeController {
   })
   async find(
     @param.filter(Employee) filter?: Filter<Employee>,
+    @param.query.boolean('isHierarchical') isHierarchical = false,
   ): Promise<Employee[]> {
+    if (isHierarchical) {
+      filter = {
+        include: [
+          {
+            relation: 'employees',
+            scope: {
+              include: [{relation: 'employees'}],
+            },
+          },
+        ],
+        where: {managerId: -1},
+      };
+    }
     return this.employeeRepository.find(filter);
   }
 
@@ -120,7 +132,8 @@ export class EmployeeController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Employee, {exclude: 'where'}) filter?: FilterExcludingWhere<Employee>
+    @param.filter(Employee, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Employee>,
   ): Promise<Employee> {
     return this.employeeRepository.findById(id, filter);
   }

@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,22 +8,25 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
 } from '@loopback/rest';
 import {Department} from '../models';
 import {DepartmentRepository} from '../repositories';
+import {DepartmentAverageSalaryService} from '../services';
 
 export class DepartmentController {
   constructor(
     @repository(DepartmentRepository)
-    public departmentRepository : DepartmentRepository,
+    public departmentRepository: DepartmentRepository,
+    @service(DepartmentAverageSalaryService)
+    public departmentAverageSalaryService: DepartmentAverageSalaryService,
   ) {}
 
   @post('/departments', {
@@ -120,7 +124,8 @@ export class DepartmentController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Department, {exclude: 'where'}) filter?: FilterExcludingWhere<Department>
+    @param.filter(Department, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Department>,
   ): Promise<Department> {
     return this.departmentRepository.findById(id, filter);
   }
@@ -169,5 +174,16 @@ export class DepartmentController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.departmentRepository.deleteById(id);
+  }
+
+  @get('/departments/{id}/average-salary', {
+    responses: {
+      '200': {
+        description: 'Average salary of the employees working in a department',
+      },
+    },
+  })
+  async getAverageSalary(@param.path.number('id') id: number): Promise<number> {
+    return this.departmentAverageSalaryService.averageSalary(id);
   }
 }

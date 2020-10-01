@@ -1,4 +1,10 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {
+  belongsTo,
+  Entity,
+  hasMany,
+  model,
+  property,
+} from '@loopback/repository';
 import {Employee, EmployeeWithRelations} from './employee.model';
 import {Location, LocationWithRelations} from './location.model';
 
@@ -23,6 +29,9 @@ export class Department extends Entity {
   @belongsTo(() => Employee)
   directorId: number;
 
+  @hasMany(() => Employee)
+  employees: Employee[];
+
   constructor(data?: Partial<Department>) {
     super(data);
   }
@@ -31,6 +40,7 @@ export class Department extends Entity {
 export interface DepartmentRelations {
   location?: LocationWithRelations;
   director?: EmployeeWithRelations;
+  employees?: EmployeeWithRelations[];
 }
 
 export type DepartmentWithRelations = Department & DepartmentRelations;

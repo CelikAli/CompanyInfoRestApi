@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -18,11 +19,14 @@ import {
 } from '@loopback/rest';
 import {Employee} from '../models';
 import {EmployeeRepository} from '../repositories';
+import {HierarchicalStructureService} from '../services';
 
 export class EmployeeController {
   constructor(
     @repository(EmployeeRepository)
     public employeeRepository: EmployeeRepository,
+    @service(HierarchicalStructureService)
+    public hierarchicalStructureService: HierarchicalStructureService,
   ) {}
 
   @post('/employees', {
@@ -81,17 +85,7 @@ export class EmployeeController {
     @param.query.boolean('isHierarchical') isHierarchical = false,
   ): Promise<Employee[]> {
     if (isHierarchical) {
-      filter = {
-        include: [
-          {
-            relation: 'employees',
-            scope: {
-              include: [{relation: 'employees'}],
-            },
-          },
-        ],
-        where: {managerId: -1},
-      };
+      return this.hierarchicalStructureService.getHierarchicalStructure();
     }
     return this.employeeRepository.find(filter);
   }

@@ -17,7 +17,7 @@ import {
   put,
   requestBody,
 } from '@loopback/rest';
-import {Department} from '../models';
+import {Department, Location} from '../models';
 import {DepartmentRepository} from '../repositories';
 import {DepartmentAverageSalaryService} from '../services';
 
@@ -174,6 +174,24 @@ export class DepartmentController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.departmentRepository.deleteById(id);
+  }
+
+  @get('/departments/{id}/location', {
+    responses: {
+      '200': {
+        description: 'Location belonging to Department',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Location)},
+          },
+        },
+      },
+    },
+  })
+  async getLocation(
+    @param.path.number('id') id: typeof Department.prototype.id,
+  ): Promise<Location> {
+    return this.departmentRepository.location(id);
   }
 
   @get('/departments/{id}/average-salary', {

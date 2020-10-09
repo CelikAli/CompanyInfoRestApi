@@ -7,22 +7,22 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
 } from '@loopback/rest';
-import {TitleChange} from '../models';
+import {Department, Employee, TitleChange} from '../models';
 import {TitleChangeRepository} from '../repositories';
 
 export class TitleChangeController {
   constructor(
     @repository(TitleChangeRepository)
-    public titleChangeRepository : TitleChangeRepository,
+    public titleChangeRepository: TitleChangeRepository,
   ) {}
 
   @post('/title-changes', {
@@ -120,7 +120,8 @@ export class TitleChangeController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(TitleChange, {exclude: 'where'}) filter?: FilterExcludingWhere<TitleChange>
+    @param.filter(TitleChange, {exclude: 'where'})
+    filter?: FilterExcludingWhere<TitleChange>,
   ): Promise<TitleChange> {
     return this.titleChangeRepository.findById(id, filter);
   }
@@ -169,5 +170,41 @@ export class TitleChangeController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.titleChangeRepository.deleteById(id);
+  }
+
+  @get('/title-changes/{id}/employee', {
+    responses: {
+      '200': {
+        description: 'Employee belonging to TitleChange',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Employee)},
+          },
+        },
+      },
+    },
+  })
+  async getEmployee(
+    @param.path.number('id') id: typeof TitleChange.prototype.id,
+  ): Promise<Employee> {
+    return this.titleChangeRepository.employee(id);
+  }
+
+  @get('/title-changes/{id}/department', {
+    responses: {
+      '200': {
+        description: 'Department belonging to TitleChange',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Department)},
+          },
+        },
+      },
+    },
+  })
+  async getDepartment(
+    @param.path.number('id') id: typeof TitleChange.prototype.id,
+  ): Promise<Department> {
+    return this.titleChangeRepository.department(id);
   }
 }

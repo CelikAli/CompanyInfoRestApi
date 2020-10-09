@@ -195,4 +195,22 @@ export class EmployeeController {
   ): Promise<Department> {
     return this.employeeRepository.department(id);
   }
+
+  @get('/employees/{id}/manager', {
+    responses: {
+      '200': {
+        description: 'The manager of the employee',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Employee)},
+          },
+        },
+      },
+    },
+  })
+  async getManager(
+    @param.path.number('id') id: typeof Employee.prototype.id,
+  ): Promise<Employee> {
+    return this.employeeRepository.manager(id);
+  }
 }

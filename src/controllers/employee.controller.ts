@@ -17,7 +17,7 @@ import {
   put,
   requestBody,
 } from '@loopback/rest';
-import {Employee} from '../models';
+import {Department, Employee} from '../models';
 import {EmployeeRepository} from '../repositories';
 import {HierarchicalStructureService} from '../services';
 
@@ -176,5 +176,23 @@ export class EmployeeController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.employeeRepository.deleteById(id);
+  }
+
+  @get('/employees/{id}/department', {
+    responses: {
+      '200': {
+        description: 'Department belonging to Employee',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Department)},
+          },
+        },
+      },
+    },
+  })
+  async getDepartment(
+    @param.path.number('id') id: typeof Employee.prototype.id,
+  ): Promise<Department> {
+    return this.employeeRepository.department(id);
   }
 }

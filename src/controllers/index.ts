@@ -1,7 +1,6 @@
 export * from './department-employee.controller';
 export * from './department-location.controller';
 export * from './department.controller';
-export * from './employee-department.controller';
 export * from './employee-employee.controller';
 export * from './employee.controller';
 export * from './location.controller';

@@ -19,7 +19,10 @@ import {
 } from '@loopback/rest';
 import {Department, Employee} from '../models';
 import {EmployeeRepository} from '../repositories';
-import {HierarchicalStructureService} from '../services';
+import {
+  EmployeeTitleChangeLinkerService,
+  HierarchicalStructureService,
+} from '../services';
 
 export class EmployeeController {
   constructor(
@@ -27,6 +30,8 @@ export class EmployeeController {
     public employeeRepository: EmployeeRepository,
     @service(HierarchicalStructureService)
     public hierarchicalStructureService: HierarchicalStructureService,
+    @service(EmployeeTitleChangeLinkerService)
+    public employeeTitleChangeLinkerService: EmployeeTitleChangeLinkerService,
   ) {}
 
   @post('/employees', {
@@ -50,7 +55,12 @@ export class EmployeeController {
     })
     employee: Omit<Employee, 'id'>,
   ): Promise<Employee> {
-    return this.employeeRepository.create(employee);
+    const employeePromise = this.employeeRepository.create(employee);
+    const newEmployee = await employeePromise;
+    await this.employeeTitleChangeLinkerService.createNewTitleChange(
+      newEmployee,
+    );
+    return newEmployee;
   }
 
   @get('/employees/count', {
